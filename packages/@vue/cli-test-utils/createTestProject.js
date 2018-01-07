@@ -27,9 +27,12 @@ module.exports = function createTestProject (name, config, cwd) {
     return mkdirp(dir).then(() => writeFile(targetPath, content))
   }
 
-  const run = (command) => {
-    const [cmd, ...args] = command.split(/\s+/)
-    const child = execa(cmd, args, { cwd: projectRoot })
+  const run = (command, args) => {
+    [command, ...args] = command.split(/\s+/)
+    if (command === 'vue-cli-service') {
+      command = path.join(projectRoot, 'node_modules', '.bin', command)
+    }
+    const child = execa(command, args, { cwd: projectRoot })
     child.then(({ code, stderr }) => {
       if (code !== 0 && stderr) console.error(stderr)
     })
