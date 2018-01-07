@@ -28,16 +28,12 @@ module.exports = function createTestProject (name, config, cwd) {
   }
 
   const run = (command, args) => {
-    try {
-      if (!args) { [command, ...args] = command.split(/\s+/) }
-      const child = execa(command, args, { cwd: projectRoot })
-      child.then(({ code, stderr }) => {
-        if (code !== 0 && stderr) console.error(stderr)
-      })
-      return child
-    } catch (err) {
-      return Promise.reject(err)
-    }
+    // if (!args) { [command, ...args] = command.split(/\s+/) }
+    const child = execa.shell(command, { cwd: projectRoot })
+    child.then(({ code, stderr }) => {
+      if (code !== 0 && stderr) console.error(stderr)
+    })
+    return child
   }
 
   const cliBinPath = require.resolve('@vue/cli/bin/vue')

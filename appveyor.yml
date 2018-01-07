@@ -6,7 +6,6 @@ install:
   - yarn
 
 test_script:
-  - echo %path%
   - git --version
   - node --version
   - yarn --version
