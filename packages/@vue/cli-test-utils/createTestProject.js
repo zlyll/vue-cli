@@ -27,14 +27,9 @@ module.exports = function createTestProject (name, config, cwd) {
     return mkdirp(dir).then(() => writeFile(targetPath, content))
   }
 
-  const run = (command, opts = {}) => {
-    let child
-    if (opts.shell !== false) {
-      child = execa.shell(command, { cwd: projectRoot })
-    } else {
-      const [cmd, ...args] = command.split(/\s+/)
-      child = execa(cmd, args, { cwd: projectRoot })
-    }
+  const run = (command) => {
+    const [cmd, ...args] = command.split(/\s+/)
+    const child = execa(cmd, args, { cwd: projectRoot })
     child.then(({ code, stderr }) => {
       if (code !== 0 && stderr) console.error(stderr)
     })

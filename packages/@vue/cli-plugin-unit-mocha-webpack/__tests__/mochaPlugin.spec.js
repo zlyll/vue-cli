@@ -11,5 +11,5 @@ test('should work', async () => {
       }
     }
   })
-  await project.run(`vue-cli-service test`, { shell: false })
+  await project.run(`vue-cli-service test`)
 })
