@@ -1,3 +1,4 @@
+const kill = require('tree-kill')
 const puppeteer = require('puppeteer')
 
 module.exports = async function serveWithPuppeteer (
@@ -18,8 +19,8 @@ module.exports = async function serveWithPuppeteer (
     })
   }
 
-  return new Promise(async (resolve, reject) => {
-    child = project.run('vue-cli-service serve')
+  await new Promise((resolve, reject) => {
+    child = project.run('vue-cli-service serve', { shell: false })
 
     let isFirstMatch = true
     child.stdout.on('data', async (data) => {
@@ -49,7 +50,7 @@ module.exports = async function serveWithPuppeteer (
 
           await browser.close()
           browser = null
-          child.kill()
+          kill(child.pid)
           child = null
           resolve()
         } else if (data.toString().match(/App updated/)) {
@@ -62,7 +63,7 @@ module.exports = async function serveWithPuppeteer (
           await browser.close()
         }
         if (child) {
-          child.kill()
+          kill(child.pid)
         }
         reject(err)
       }
