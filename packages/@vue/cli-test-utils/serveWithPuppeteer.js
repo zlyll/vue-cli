@@ -20,7 +20,6 @@ module.exports = async function serveWithPuppeteer (
 
   return new Promise(async (resolve, reject) => {
     child = project.run('vue-cli-service serve')
-    child.catch(reject)
 
     let isFirstMatch = true
     child.stdout.on('data', async (data) => {

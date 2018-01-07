@@ -28,12 +28,16 @@ module.exports = function createTestProject (name, config, cwd) {
   }
 
   const run = (command, args) => {
-    if (!args) { [command, ...args] = command.split(/\s+/) }
-    const child = execa(command, args, { env: process.env, cwd: projectRoot })
-    child.then(({ code, stderr }) => {
-      if (code !== 0 && stderr) console.error(stderr)
-    })
-    return child
+    try {
+      if (!args) { [command, ...args] = command.split(/\s+/) }
+      const child = execa(command, args, { cwd: projectRoot })
+      child.then(({ code, stderr }) => {
+        if (code !== 0 && stderr) console.error(stderr)
+      })
+      return child
+    } catch (err) {
+      return Promise.reject(err)
+    }
   }
 
   const cliBinPath = require.resolve('@vue/cli/bin/vue')
@@ -48,7 +52,6 @@ module.exports = function createTestProject (name, config, cwd) {
 
   const options = {
     cwd,
-    env: process.env,
     stdio: 'inherit'
   }
 
