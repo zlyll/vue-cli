@@ -29,7 +29,7 @@ module.exports = function createTestProject (name, config, cwd) {
 
   const run = (command, args) => {
     if (!args) { [command, ...args] = command.split(/\s+/) }
-    const child = execa(command, args, { cwd: projectRoot })
+    const child = execa(command, args, { env: process.env, cwd: projectRoot })
     child.then(({ code, stderr }) => {
       if (code !== 0 && stderr) console.error(stderr)
     })
@@ -48,6 +48,7 @@ module.exports = function createTestProject (name, config, cwd) {
 
   const options = {
     cwd,
+    env: process.env,
     stdio: 'inherit'
   }
 

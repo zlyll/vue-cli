@@ -61,8 +61,7 @@ module.exports = (api, options) => {
       )
 
       if (!isProduction) {
-        // inject dev/hot client
-        addDevClientToEntry(webpackConfig, [
+        const devClients = [
           // dev server client
           `webpack-dev-server/client/?${urls.localUrlForBrowser}`,
           // hmr client
@@ -71,7 +70,12 @@ module.exports = (api, options) => {
             : 'webpack/hot/dev-server'
           // TODO custom overlay client
           // `@vue/cli-overlay/dist/client`
-        ])
+        ]
+        if (process.env.APPVEYOR) {
+          devClients.push(`webpack/hot/poll?500`)
+        }
+        // inject dev/hot client
+        addDevClientToEntry(webpackConfig, devClients)
       }
 
       const compiler = webpack(webpackConfig)
@@ -129,7 +133,7 @@ module.exports = (api, options) => {
         watchContentBase: !isProduction,
         hot: !isProduction,
         quiet: true,
-        compress: true,
+        compress: isProduction,
         publicPath: '/',
         overlay: isProduction // TODO disable this
           ? false

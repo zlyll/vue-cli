@@ -18,8 +18,9 @@ module.exports = async function serveWithPuppeteer (
     })
   }
 
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     child = project.run('vue-cli-service serve')
+    child.catch(reject)
 
     let isFirstMatch = true
     child.stdout.on('data', async (data) => {
@@ -33,11 +34,10 @@ module.exports = async function serveWithPuppeteer (
           const url = urlMatch[0]
           await page.goto(url)
 
-          const assertText = async (selector, text) => {
-            const value = await page.evaluate(() => {
-              return document.querySelector('h1').textContent
-            })
-            expect(value).toMatch(text)
+          const getText = selector => {
+            return page.evaluate(selector => {
+              return document.querySelector(selector).textContent
+            }, selector)
           }
 
           await testFn({
@@ -45,7 +45,7 @@ module.exports = async function serveWithPuppeteer (
             page,
             url,
             nextUpdate,
-            assertText
+            getText
           })
 
           await browser.close()
